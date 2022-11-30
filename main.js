@@ -91,7 +91,7 @@ const calculateIva = (totalPurchase) =>{
     const add =  (a, b) => a + b;
     const substract = (a,b) => a - b;
 
-    const calculateIva = x => x * 0.21;
+    let calculateIva = x => x * 1.21;
 
     let productPrice = totalPurchase;
     let discountPrice = totalPurchase * 0.80;
