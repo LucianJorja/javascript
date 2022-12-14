@@ -1,106 +1,100 @@
 
-const buyProducts = ()  => {
-    let product = ''
-    let quantity = 0;
-    let price= 0;
-    let totalPurchase = 0;
-    let keepBuying = false
+const cart = [];
+
+const sortCheaperToExpensive = () =>{
+    products.sort ((a,b) => a.price - b.precio)
+    showSortedList()
+}
+
+const showSortedList = () => {
+    const sortedList = products.map (product => {
+        return '- '+product.name+' $'+product.price
+    });
+    alert('Lista de precios'+'\n'+sortedList.join('\n'));
+    buyProducts(sortedList);
+}
+
+const buyProducts = (productsList) =>{
+
+    let keepBuying;
+    let productName = '';
+    let productQuantity = 0;
 
     do{
-        product = prompt('¿Querés comprar remera, pantalón, buso, campera o los cuatro productos?')
-        quantity = parseInt(prompt('¿Cuántos queres comprar?'));
-        let validatedQuantity = validateQuantity(quantity);
-        
-        switch (product) {
-            case 'remera':
-                price = 2200
-                break;
-            case 'pantalón':
-                price = 3100
-                break;
-            case 'buso':
-                price = 4300
-                break;
-            case 'campera':
-                price = 3500
-                break;
-            case 'los cuatro productos':
-                price = 13100
-                    break;
-            default:
-                alert('Ingresaste un producto que no está a la venta.')
-                price = 0
-                validatedQuantity = 0
+        productName = prompt('¿Qué producto desea añadir?'+'\n\n'+productsList.join('\n'));
+        productQuantity = parseInt(prompt('¿Cúantos queres añadir?'));
+
+        const product = products.find(product => product.name.toLowerCase() === productName.toLowerCase());
+
+        if (product) {
+            addToTheCart(product, product.id, productQuantity);
+        }else{
+            alert('El producto no se encuentra en el catálogo.');
         }
-        
-        totalPurchase += price * validatedQuantity;
 
-        keepBuying = confirm('¿Quiere seguir comprando?')
-    } while (keepBuying);
-
-
-    const totalWithDiscount = applyDiscount(totalPurchase);
-    calculateDelivery(totalWithDiscount);
-    const totalPrice = calculateIva(totalPurchase);
-
-};
-
-const validateQuantity = (quantity) => {
-    while (Number.isNaN (quantity) || quantity <= 0) { 
-        if (quantity <= 0 ) {
-            alert('Debe ingresar un número válido.')
-        } else {
-            alert('Debe ingresar un número')
-        }
-        quantity = parseInt(prompt('¿Cuántos queres comprar'));
-        
-    }
-    return quantity;
-};
-
-const applyDiscount = (totalPurchase) => {
-    let totalWithDiscount = 0;
-
-    if (totalPurchase >= 12000){
-         totalWithDiscount = totalPurchase * 0.90
-        return totalWithDiscount;
-    } else {
-        return totalPurchase;
-    }
-
-
-};
-
-
-const calculateDelivery = (totalPurchase) => {
-    let deliveryToAdress = false
+        keepBuying = confirm('¿Desea añadir otro producto?')
+    }while(keepBuying);
     
-    deliveryToAdress = confirm('¿Querés envío a domicilio?')
+    confirmPurchase();
+}
 
-    if (deliveryToAdress && totalPurchase >= 8000) {
-        alert('Tiene envío gratis a domicilio. El total de tu compra es $'+ totalPurchase)
-    } else if (deliveryToAdress && totalPurchase < 8000 && totalPurchase !== 0) {
-        totalPurchase += 1800;
-        alert('El total de tu compra, más envío, es $' +totalPurchase)
+const addToTheCart = (product, productId, productQuantity) => {
+    const repeatedProduct = cart.find(product => product.id === productId);
+    if(repeatedProduct){
+        repeatedProduct.quantity += productQuantity
     }else{
-        alert('El total de tu compra es $' +totalPurchase)
+        product.quantity += productQuantity;
+        cart.push(product)
     }
+    console.log(cart);
 }
 
-const calculateIva = (totalPurchase) =>{
-    const add =  (a, b) => a + b;
-    const substract = (a,b) => a - b;
+const confirmPurchase = () => {
+    const productsList = cart.map (product => {
+        return '- '+product.name+' - Cantidad: '+ product.quantity
+    });
 
-    let calculateIva = x => x * 1.21;
+    const confirmP = confirm('Checkout: '
+        +'\n\n'+productsList.join('\n')
+        +'\n\nPresione "Aceptar" si desea continuar la compra, presione "Cancelar" para cancelar la compra.'
+    );
+    
+    if(confirmP){
+        endPurchase(productsList);
+    }
+};
 
-    let productPrice = totalPurchase;
-    let discountPrice = totalPurchase * 0.80;
 
-    const iva = calculateIva(productPrice);
-    const priceWithIva = add(productPrice, iva);
-    const totalPrice = substract(priceWithIva, discountPrice)
-    return totalPrice;
+const endPurchase = (productsList) => {
+    const totalQuantity = cart.reduce((acc, element) => acc + element.quantity, 0);
+    const totalPrice = cart.reduce((acc, element) => acc + (element.price * element.quantity), 0);
+    
+    // let totalPurchase = calculateIva(totalPrice);
+
+    alert('Detalles de tu compra:'
+    +'\n\n'+productsList.join('\n')
+    +'\n\nTotal de productos: '+totalQuantity
+    +'\n\nEl total de tu compra es: '+totalPrice
+    );
+
 }
 
+// const calculateIva = (productsList) =>{
+//     const add =  (a, b) => a + b;
+//     const substract = (a,b) => a - b;
 
-    buyProducts ()
+//     let calculateIva = x => x * 1.21;
+
+//     let productPrice = productsList;
+//     let discountPrice = productsList * 0.80;
+
+//     const iva = calculateIva(productPrice);
+//     const priceWithIva = add(productPrice, iva);
+//     const totalPurchase = substract(priceWithIva, discountPrice)
+//     return totalPurchase;
+// }
+
+sortCheaperToExpensive()
+
+
+
