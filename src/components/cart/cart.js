@@ -15,10 +15,10 @@ const validateProductsInCart = (productId) => {
         const product = products.find(product => product.id == productId);
         cart.push(product);
         paintCartProduct(product);
-        loadCartTotal(cart);
+        updateCartTotal(cart);
     } else {
         duplicatedProduct.quantity++
-        loadCartTotal(cart);
+        updateCartTotal(cart);
     }
 };
 
@@ -35,12 +35,13 @@ const paintCartProduct = (product) => {
     container.appendChild(div);
 };
 
-const loadCartTotal = (cart) => {
+const updateCartTotal = (cart) => {
     const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
     const totalPurchase= cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
     paintCartTotal(totalQuantity, totalPurchase);
     saveCartOnStorage(cart);
+    
 };
 
 const paintCartTotal = (totalQuantity, totalPurchase) => {
@@ -54,12 +55,16 @@ const paintCartTotal = (totalQuantity, totalPurchase) => {
 const deleteProductFromCart = (productId) => {
     const productIndex= cart.findIndex(product => product.id == productId);
     cart.splice(productIndex, 1);
+    
+    if(endPurchase){
+        
+    }
 
-    loadCart(cart);
-    loadCartTotal(cart);
+    updateCart(cart);
+    updateCartTotal(cart);
 };
 
-const loadCart = (cart) => {
+const updateCart = (cart) => {
     const container = document.getElementById('cart-container');
     
     container.innerHTML= '';
@@ -85,3 +90,33 @@ const getCartFromStorage = () => {
     return cartStorage;
 };
 
+const endPurchase = document.querySelector('.endPurchase');
+
+if(endPurchase){
+    endPurchase.addEventListener('click', sendPurchase)
+}
+
+function sendPurchase(e){
+    e.preventDefault()
+    
+    if (cart ==''){
+        Swal.fire({
+            icon: 'error',
+            title: 'No hay ningún producto en el carrito!',
+            text: 'Debe agregar un producto al carrito!',
+        })
+    }else{
+        Swal.fire({
+            position: 'top',
+            icon: 'success',
+            title: 'Gracias por su compra!',
+            text: 'Su compra ha sido realizada correctamente!',
+            showConfirmButton: false,
+            timer: 2500
+        })
+        setTimeout(() =>{
+            window.location.reload();
+        }, 3000);
+    }
+    localStorage.clear();
+}

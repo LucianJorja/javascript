@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (localStorage.getItem('carrito')) {
         cart = getCartFromStorage()
-            loadCart(cart);
-            loadCartTotal(cart);
+            updateCart(cart);
+            updateCartTotal(cart);
         }
     
 })

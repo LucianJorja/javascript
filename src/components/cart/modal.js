@@ -21,3 +21,4 @@ modalCart.addEventListener('click', (e) => {
         deleteProductFromCart(e.target.value);
     }
 });
+

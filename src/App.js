@@ -1,7 +1,9 @@
-const paintProducts = () => {
+const paintProducts = async () => {
     const container = document.getElementById('product-container')
 
-    products.forEach( product => {
+    const data = await productsController()
+
+    data.forEach( product => {
         const div = document.createElement('div');
         div.classList.add('card');
         div.innerHTML += `<div class="card-image">
